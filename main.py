@@ -5,7 +5,8 @@ import pygame, random
 ANCHO = 800
 LARGO= 600
 NEGRO=(0,0,0)
-BLANCO = (255,255,255)
+marcador = 0
+
 
 
 # Creacion del menu principal
@@ -15,6 +16,14 @@ screen = pygame.display.set_mode((ANCHO,LARGO))
 pygame.display.set_caption("Space invaders remaster")
 reloj = pygame.time.Clock()
 running = True
+
+def dibujaTexto(surface, text, size, x, y):
+	font = pygame.font.SysFont("serif", size)
+	text_surface = font.render(text, True, (255, 255, 255))
+	text_rect = text_surface.get_rect()
+	text_rect.midtop = (x, y)
+	surface.blit(text_surface, text_rect)
+
 
 class Jugador (pygame.sprite.Sprite):
     def __init__(self):
@@ -38,6 +47,11 @@ class Jugador (pygame.sprite.Sprite):
             self.rect.right = ANCHO
         if self.rect.left < 0:
             self.rect.left = 0
+    
+    def disparo(self):
+        bullet = Bullet(self.rect.centerx, self.rect.top)
+        all_sprites.add(bullet)
+        bullets.add(bullet)
 
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self):
@@ -56,12 +70,28 @@ class Enemigo(pygame.sprite.Sprite):
             self.rect.x = random.randrange(ANCHO - self.rect.width)
             self.rect.y = random.randrange(-100, -40)
             self.speedy = random.randrange(1, 8)
+            
+class Bullet(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		super().__init__()
+		self.image = pygame.image.load("assets/laser1.png")
+		self.image.set_colorkey(NEGRO)
+		self.rect = self.image.get_rect()
+		self.rect.y = y
+		self.rect.centerx = x
+		self.speedy = -10
+
+	def update(self):
+		self.rect.y += self.speedy
+		if self.rect.bottom < 0:
+			self.kill()
  
  # Cargar fondo.
 background = pygame.image.load("assets/background.png").convert()
            
 all_sprites = pygame.sprite.Group()
 enemigoLista = pygame.sprite.Group()
+bullets = pygame.sprite.Group()
 
 jugador = Jugador()
 
@@ -84,13 +114,36 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 		
+		elif event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				jugador.disparo()
+		
+
 	# Update
 	all_sprites.update()
+
+	# Colisiones meteoro - laser
+	hits = pygame.sprite.groupcollide(enemigoLista, bullets, True, True)
+	for hit in hits:
+		marcador += 1
+		enemigo = Enemigo()
+		all_sprites.add(enemigo)
+		enemigoLista.add(enemigo)
+
+		
+	# Colisiones jugador - meteoro
+	hits = pygame.sprite.spritecollide(jugador, enemigoLista, False)
+	if hits:
+		running = False
 
 	#Draw / Render
 	screen.blit(background, [0, 0])
 	all_sprites.draw(screen)
-	# *after* drawing everything, flip the display.
+
+	# Marcador
+	dibujaTexto(screen, str(marcador), 25,ANCHO    // 2, 10)
+
+
 	pygame.display.flip()
 
 pygame.quit()
