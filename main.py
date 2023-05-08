@@ -6,7 +6,7 @@ ANCHO = 800
 LARGO= 600
 NEGRO=(0,0,0)
 marcador = 0
-
+running = True
 
 
 # Creacion del menu principal
@@ -15,7 +15,7 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((ANCHO,LARGO))
 pygame.display.set_caption("Space invaders remaster")
 reloj = pygame.time.Clock()
-running = True
+
 
 def dibujaTexto(surface, text, size, x, y):
 	font = pygame.font.SysFont("serif", size)
@@ -85,6 +85,14 @@ class Bullet(pygame.sprite.Sprite):
 		self.rect.y += self.speedy
 		if self.rect.bottom < 0:
 			self.kill()
+
+
+enemigoImagenes = []
+enemigoLista = ["assets/meteorGrey_big1.png", "assets/meteorGrey_big2.png", "assets/meteorGrey_big3.png", "assets/meteorGrey_big4.png",
+				"assets/meteorGrey_med1.png", "assets/meteorGrey_med2.png", "assets/meteorGrey_small1.png", "assets/meteorGrey_small2.png",
+				"assets/meteorGrey_tiny1.png", "assets/meteorGrey_tiny2.png"]
+for img in enemigoLista:
+	enemigoImagenes.append(pygame.image.load(img).convert())
  
  # Cargar fondo.
 background = pygame.image.load("assets/background.png").convert()
@@ -146,4 +154,4 @@ while running:
 
 	pygame.display.flip()
 
-pygame.quit()
+pygame.quit() 
