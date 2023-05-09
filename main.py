@@ -141,7 +141,9 @@ class Explosion(pygame.sprite.Sprite):
 def MuestraMenu():
 	screen.blit(background, [0, 0])
 	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
-	dibujaTexto(screen, "Para moverse pulse la teclas y el espaciador para disparar", 27, ANCHO // 2, ALTO // 2)
+	dibujaTexto(screen, "Para moverse pulse la teclas izquierda o derecha para moverse", 27, ANCHO // 2, ALTO // 2)
+	dibujaTexto(screen, "Presiona la barra espaciadora para disparar", 27, ANCHO // 2, (ALTO +80)// 2)
+	dibujaTexto(screen, "Para ganar debes derribar 60 o más naves", 27, ANCHO // 2, (ALTO +160)// 2)
 	dibujaTexto(screen, "Presiona una tecla para comenzar", 17, ANCHO // 2, ALTO * 3/4)
 	pygame.display.flip()
 	waiting = True
@@ -153,6 +155,35 @@ def MuestraMenu():
 			if event.type == pygame.KEYUP:
 				waiting = False
 
+def MenuGanador():
+	screen.blit(background, [0, 0])
+	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
+	dibujaTexto(screen, "You win!", 40, ANCHO // 2, (ALTO +160)// 2)
+	dibujaTexto(screen, "Presiona una tecla para volver a jugar", 17, ANCHO // 2, ALTO * 3/4)
+	pygame.display.flip()
+	waiting = True
+	while waiting:
+		clock.tick(60)
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+			if event.type == pygame.KEYUP:
+				waiting = False
+
+def MenuPerdedor():
+	screen.blit(background, [0, 0])
+	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
+	dibujaTexto(screen, "You lost!", 40, ANCHO // 2, (ALTO +160)// 2)
+	dibujaTexto(screen, "Presiona una tecla para volver a jugar", 17, ANCHO // 2, ALTO * 3/4)
+	pygame.display.flip()
+	waiting = True
+	while waiting:
+		clock.tick(60)
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+			if event.type == pygame.KEYUP:
+				waiting = False  
 
 # Listas de imagenes
 enemigoImagenes = []
@@ -187,8 +218,16 @@ pygame.mixer.music.set_volume(0.1)
 # Game Loop
 game_over = True
 corriendo = True
+ganaste = False
+marcador = 0
 while corriendo:
 	if game_over:
+		print(marcador)
+		if marcador >= 60:
+			MenuGanador()
+		elif marcador != 0:
+			MenuPerdedor()
+    		
 		MuestraMenu()
 		game_over = False
 		all_sprites = pygame.sprite.Group()
@@ -203,8 +242,8 @@ while corriendo:
 			all_sprites.add(enemigo)
 			enemigoLista.add(enemigo)
 
-		#Marcador / narcador
-		narcador = 0
+		#Marcador / marcador
+		marcador = 0
 	# Keep loop corriendo at the right speed
 	clock.tick(60)
 	# Process input (events)
@@ -224,7 +263,7 @@ while corriendo:
 	# Colisiones enemigo - laser
 	hits = pygame.sprite.groupcollide(enemigoLista, bullets, True, True)
 	for hit in hits:
-		narcador += 1
+		marcador += 1
 		#explosion_sound.play()
 		explosion = Explosion(hit.rect.center)
 		all_sprites.add(explosion)
@@ -244,7 +283,9 @@ while corriendo:
 		enemigo = Enemigo()
 		all_sprites.add(enemigo)
 		enemigoLista.add(enemigo)
-		if jugador.escudo <= 0 :
+		if jugador.escudo <= 0 or  marcador == 10:
+			
+			
 			#corriendo = False
 			game_over = True
 
@@ -253,7 +294,7 @@ while corriendo:
 	all_sprites.draw(screen)
 
 	# Marcador
-	dibujaTexto(screen, str(narcador), 25, ANCHO // 2, 10)
+	dibujaTexto(screen, str(marcador), 25, ANCHO // 2, 10)
 
 	# ESCUDO.
 	dibujaEscudo(screen, 5, 5, jugador.escudo)
