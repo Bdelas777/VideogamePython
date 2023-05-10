@@ -5,7 +5,7 @@ Este videojuego se ejecuta desde el main
 
 import pygame, random
 
-# Proporcion de la ventana
+# Proporcion de la ventana que va a aparecer
 ANCHO = 800
 ALTO = 600
 
@@ -31,10 +31,11 @@ def dibujaTexto(surface, text, size, x, y):
 	surface.blit(text_surface, text_rect)
 
 
-# Funcion para dibujar el escudo
+# Funcion para dibujar el escudo 
+# Recibe de parametros una superficie, ancho y largo y el porcentaje de vida
 def dibujaEscudo(surface, x, y, percentage):
-	BARRA_LARGO= 100
-	BARRA_ALTO = 10
+	BARRA_LARGO= 300
+	BARRA_ALTO = 30
 	fill = (percentage / 100) * BARRA_LARGO
 	border = pygame.Rect(x, y, BARRA_LARGO, BARRA_ALTO)
 	fill = pygame.Rect(x, y, fill, BARRA_ALTO)
@@ -43,6 +44,8 @@ def dibujaEscudo(surface, x, y, percentage):
 
 
 # Clase de diseño de jugador
+# se inicializa todo
+# Update actualiza al jugador cada tiempo y disparo muestras los lazers
 class Jugador(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -76,6 +79,7 @@ class Jugador(pygame.sprite.Sprite):
 		sonidoLaser.play()
 
 # Clase de creacion de enemigo
+# Se inicializa todos los enemigos y se actualizan sus posiciones
 class Enemigo(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
@@ -98,6 +102,7 @@ class Enemigo(pygame.sprite.Sprite):
 			self.speedy = random.randrange(1, 8)
 
 # Clase para crear el laser
+# BUllet actualiza la salida de los lazers y lo inicializa
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		super().__init__()
@@ -114,6 +119,7 @@ class Bullet(pygame.sprite.Sprite):
 			self.kill()
 
 # Clase que crea las explosiones
+# Inicializa las explosiones y las actualiza
 class Explosion(pygame.sprite.Sprite):
 	def __init__(self, center):
 		super().__init__()
@@ -137,7 +143,7 @@ class Explosion(pygame.sprite.Sprite):
 				self.rect = self.image.get_rect()
 				self.rect.center = center
 
-
+# Nos muestra el menu principal y todas sus instrucciones
 def MuestraMenu():
 	screen.blit(background, [0, 0])
 	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
@@ -155,6 +161,7 @@ def MuestraMenu():
 			if event.type == pygame.KEYUP:
 				waiting = False
 
+# Nos muestra el menu de has ganado
 def MenuGanador():
 	screen.blit(background, [0, 0])
 	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
@@ -170,6 +177,7 @@ def MenuGanador():
 			if event.type == pygame.KEYUP:
 				waiting = False
 
+# Nos muestra el menu de has perdido 
 def MenuPerdedor():
 	screen.blit(background, [0, 0])
 	dibujaTexto(screen, "Space Invaders Remaster", 65, ANCHO // 2, ALTO / 4)
@@ -212,7 +220,6 @@ pygame.mixer.music.load("assets/music.ogg")
 pygame.mixer.music.set_volume(0.1)
 
 
-#pygame.mixer.music.play(loops=-1)
 
 # Game Loop
 game_over = True
@@ -275,7 +282,6 @@ while corriendo:
 	# Colisiones jugador - enemigoo
 
 
-	################## CHANGES HERE ################################
 	hits = pygame.sprite.spritecollide(jugador, enemigoLista, True) # Change here
 	for hit in hits:
 		jugador.escudo -= 25
@@ -291,7 +297,7 @@ while corriendo:
 	all_sprites.draw(screen)
 
 	# Marcador
-	dibujaTexto(screen, str(marcador), 25, ANCHO // 2, 10)
+	dibujaTexto(screen, str(marcador), 45, ANCHO // 2, 10)
 
 	# ESCUDO.
 	dibujaEscudo(screen, 5, 5, jugador.escudo)
