@@ -46,7 +46,7 @@ def dibujaEscudo(surface, x, y, percentage):
 class Jugador(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		self.image = pygame.image.load("assets/player.png").convert()
+		self.image = pygame.image.load("assets/player2.png").convert()
 		self.image.set_colorkey(NEGRO)
 		self.rect = self.image.get_rect()
 		self.rect.centerx = ANCHO // 2
@@ -187,9 +187,8 @@ def MenuPerdedor():
 
 # Listas de imagenes
 enemigoImagenes = []
-enemigoLista = ["assets/meteorGrey_big1.png", "assets/meteorGrey_big2.png", "assets/meteorGrey_big3.png", "assets/meteorGrey_big4.png",
-				"assets/meteorGrey_med1.png", "assets/meteorGrey_med2.png", "assets/meteorGrey_small1.png", "assets/meteorGrey_small2.png",
-				"assets/meteorGrey_tiny1.png", "assets/meteorGrey_tiny2.png"]
+enemigoLista = ["assets/Ship1.png","assets/Ship2.png","assets/Ship3.png","assets/Ship4.png","assets/Ship5.png","assets/Ship6.png" ]
+
 for img in enemigoLista:
 	enemigoImagenes.append(pygame.image.load(img).convert())
 
@@ -222,7 +221,7 @@ ganaste = False
 marcador = 0
 while corriendo:
 	if game_over:
-		print(marcador)
+	
 		if marcador >= 60:
 			MenuGanador()
 		elif marcador != 0:
@@ -283,9 +282,7 @@ while corriendo:
 		enemigo = Enemigo()
 		all_sprites.add(enemigo)
 		enemigoLista.add(enemigo)
-		if jugador.escudo <= 0 or  marcador == 10:
-			
-			
+		if jugador.escudo <= 0 :
 			#corriendo = False
 			game_over = True
 
